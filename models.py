@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, Column
 from database import Base
 
-
+#entity means database model/table
 class BookDetails(Base):
 
     __tablename__ = 'books'
