@@ -1,7 +1,7 @@
 from  fastapi import FastAPI , Depends, HTTPException, status
 from pydantic import BaseModel, Field
 import logging
-from uuid import UUID   #universal unique id of 128 bit char
+#from uuid import UUID   #universal unique id of 128 bit char
 import models       #create database table 
 from database import engine, SessionLocal #engine-> to start
 from sqlalchemy.orm import Session
@@ -30,7 +30,7 @@ class Book(BaseModel):
     Title : str = Field(min_length=1)
     description : str = Field(min_length=1, max_length=100)
     Author: str = Field(min_length=1, max_length=100)
-    rating: int = Field(gt=-1, lt=101)
+    rating: int = Field(gt=0, lt=6) #constraint
 
 
 BOOKS = []
@@ -141,3 +141,19 @@ def sum_num():
 
     return {"message":"finally Done"} 
 
+@app.get("/calculator/{n}")                #url for title
+def calc(n: int):         #to create function for title
+    result = isDivisibleBy(n)
+    return {"isDivisible":result}
+
+
+@app.get("/even/{n}")                #url for title
+def evenOdd(n: int):         #to create function for title
+    result = isDivisibleBy(n)
+    return {"isEven":result}
+
+# util/common code
+def isDivisibleBy(n):
+    if n%2 == 0:
+        return True
+    return False
