@@ -1,6 +1,7 @@
-from  fastapi import FastAPI , Depends, HTTPException, status
+from  fastapi import FastAPI , Depends, HTTPException, status, BackgroundTasks
 from pydantic import BaseModel, Field
-import logging
+import logging 
+from typing import Annotated
 #from uuid import UUID   #universal unique id of 128 bit char
 import models       #create database table 
 from database import engine, SessionLocal #engine-> to start
@@ -13,8 +14,10 @@ log = logging.getLogger(__name__)   # assign loggers with name
 #create ne app
 app = FastAPI()
 
+
 #create models in database
-models.Base.metadata.create_all(bind=engine)  
+models.Base.metadata.create_all(bind=engine)
+
 
 #if table not exists create it
 def get_db():
