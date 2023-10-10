@@ -5,34 +5,13 @@ from fastapi import FastAPI
 import requests
 import os
 
-
-app = FastAPI()
-
-#from pymongo.mongo_client import MongoClient
-
-#uri = "mongodb+srv://admin:zGVimRk8Z4M6SdlE@cluster0.n3sfji4.mongodb.net/?retryWrites=true&w=majority"
-
-# Create a new client and connect to the server
-
-#client = MongoClient(uri)
-
-# Send a ping to confirm a successful connection
-
-
-#try:
-
-#    client.admin.command('ping')
-#    print("Pinged your deployment. You successfully connected to MongoDB!")
-#except Exception as e:
-#    print(e)
-
 #serilizer/ deserializer
 class wiki_data(BaseModel):
     id : str
     title : str
     text : str
 
-
+app = FastAPI()            # return in string format
 #title, id, text
 
 #to get title
