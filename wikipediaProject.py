@@ -5,11 +5,9 @@ from fastapi import FastAPI, Request
 import requests
 from pymongo import MongoClient
 from dotenv import dotenv_values   #to call data from .env
-from fastapi.encoders import jsonable_encoder
 
 
 config  = dotenv_values(".env")
-
 #serilizer/ deserializer
 class wiki_data(BaseModel):
     id : str
@@ -19,24 +17,23 @@ class wiki_data(BaseModel):
 app = FastAPI()            # return in string format
 #title, id, text
 
-#to get title
+#to get title   
 @app.post("/{title}")                #url for title
 def get_title(request: Request, title : str):         #to create function for title
     wiki = get_wikipedia_page(title)   #class call to pass column name
-    dict(wiki)
-    #print(list(request.app.database["lists"].find(limit=50)))
-    list = jsonable_encoder(title)
-    new_list_item = request.app.database["lists"].insert_one(list)
-    created_list_item = request.app.database["lists"].find_one({"title":new_list_item.inserted_title})
-    print(created_list_item)
+    request.app.state.collection.insert_one(dict(wiki))
     return {'message':'Database Entry Done'}
 
 
+@app.get("/")
+def get_details()
 
 @app.on_event("startup")
 def startup_db_client():
     app.mongodb_client = MongoClient(config["MONGODB_CONNECTION_URI"])
     app.database = app.mongodb_client[config["DB_NAME"]]
+    collection = app.database.get_collection(config["COLLECTION_NAME"])
+    app.state.collection = collection
     print("Connected to MONGODB database!")
 
 @app.on_event("shutdown")
