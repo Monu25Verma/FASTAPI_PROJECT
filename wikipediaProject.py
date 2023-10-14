@@ -1,12 +1,14 @@
 from pydantic import Field, BaseModel
 import logging
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request , HTTPException
 #from dataset import Dataset
 import requests
 from pymongo import MongoClient
 from dotenv import dotenv_values   #to call data from .env
 
+logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 
+log = logging.getLogger(__name__)
 config  = dotenv_values(".env")
 #serilizer/ deserializer
 class wiki_data(BaseModel):
