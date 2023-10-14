@@ -32,11 +32,15 @@ def CreateDataset(request: Request, title : str):         #to create function fo
 
 @app.get("/getData/{title}")
 def RetrieveDataset(request: Request, title : str):
-    response = request.app.state.collection.find_one({"title":title})
+    response = request.app.state.collection.find_one({"title":title}) #object
+    log.info("Retrieve data successfully")
     try:
-        message = wiki_data(id=response["id"],title=response["title"],text=response["text"])
+        message = wiki_data(id=response["id"],title=response["title"],text=response["text"]) #object to deserialize
+
         return dict(message)
+
     except TypeError:
+        log.warn("exception raise TypeError")
         raise HTTPException(
             status_code = 404,
             detail= f"{title} : Does not exist in DB",
@@ -60,15 +64,16 @@ def startup_db_client():
     app.mongodb_client = MongoClient(config["MONGODB_CONNECTION_URI"])
     app.database = app.mongodb_client[config["DB_NAME"]]
     app.state.collection = app.database.get_collection(config["COLLECTION_NAME"])
-    print("Connected to MONGODB database!")
-    log.info("Connected with Database")
+    log.info("Connected with %s Database",str(config["DB_NAME"]).upper())
 
 @app.on_event("shutdown")
 def shut_down_db_client():
     app.mongodb_client.close()
-
+    log.info("Disconnected with %s Database",str(config["DB_NAME"]).upper())
+    
 # utility/commoncode
 def get_wikipedia_page(title):
+    log.info("created Untility successfully")
     response = requests.get(
         'https://en.wikipedia.org/w/api.php',
         params={
