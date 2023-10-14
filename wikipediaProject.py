@@ -1,6 +1,6 @@
 from pydantic import Field, BaseModel
 import logging
-from fastapi import FastAPI, Request, Response, HTTPException
+from fastapi import FastAPI, Request
 #from dataset import Dataset
 import requests
 from pymongo import MongoClient
@@ -8,13 +8,9 @@ from dotenv import dotenv_values   #to call data from .env
 
 
 config  = dotenv_values(".env")
-
-logging.config.fileConfig('logging.conf', disable_existing_loggers=False)   #disable the loggers that are present when the function is called
-log = logging.getLogger(__name__)   # assign loggers with name
-
 #serilizer/ deserializer
 class wiki_data(BaseModel):
-    id : int
+    id : str
     title : str
     text : str
 
@@ -23,7 +19,7 @@ app = FastAPI()            # return in string format
 
 #to get title   
 @app.post("/{title}")                #url for title
-def CreateDataset(request: Request, title : str):         #to create function for title
+def get_title(request: Request, title : str):         #to create function for title
     wiki = get_wikipedia_page(title)   #class call to pass column name
     request.app.state.collection.insert_one(dict(wiki))
     return {'message':'Database Entry Done'}
@@ -64,7 +60,8 @@ def startup_db_client():
     app.mongodb_client = MongoClient(config["MONGODB_CONNECTION_URI"])
     app.database = app.mongodb_client[config["DB_NAME"]]
     app.state.collection = app.database.get_collection(config["COLLECTION_NAME"])
-    log.info("Connected with %s Database",str(config["DB_NAME"]).upper())
+    print("Connected to MONGODB database!")
+    log.info("Connected with Database")
 
 @app.on_event("shutdown")
 def shut_down_db_client():
@@ -92,6 +89,7 @@ def get_wikipedia_page(title):
         'title': page['title'],
         'text': page['extract'],
     }
+
 
 
 
